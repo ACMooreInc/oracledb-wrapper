@@ -33,10 +33,10 @@ ___
 ### getConnection
 If connection is passed return same connection, otherwise create the connection
 ```javascript
-getConnection(dbOrConnection, callback);
+getConnection(databaseOrConnection, callback);
 ```
 #### Parameters:
-##### dbOrConnection:
+##### databaseOrConnection:
 
 
 TODO: DEFINE
@@ -131,6 +131,7 @@ Executes a package call to the database
 executePkg(options, callback);
 ```
  If connection is passed in the options variable then query considered to be part of transaction and there will be no commit
+ 
  If connection is not passed in the options variable then query considered to be a standalone query and there will be an autoCommit
 
 #### Parameters:
@@ -152,16 +153,16 @@ buildBindVariables(inputStructure, input);
 #### Parameters:
 ##### inputStructure: *Array*
 ###### Elements: [Field name, Type, Dir, Required(boolean)]
-|**Types** | |
+###### Types Mapping:
+|Symbol | Value |
 | --- | --- |
-|**Symbol** | **Value** |
 | S | String|
 | N | Number | 
 | D | Date |
 
-| **Dirs** | |
+###### Dirs Mapping:
+|Symbol | Value|
 | --- | ---|
-| **Symbol** | **Value**|
 | I | BIND_IN |
 | O | BIND_OUT | 
 | IO | BIND_INOUT|
