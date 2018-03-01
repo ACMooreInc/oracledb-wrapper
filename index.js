@@ -3,7 +3,6 @@
 var oracledb = require('oracledb'),
     path = require('path'),
     async = require('async'),
-    _ = require('lodash'),
     config,
     pools = {};
 
@@ -174,7 +173,7 @@ function executePkg(options, done) {
     });
 }
 
-function executeQuery(options, cb) {
+function selectQuery(options, cb) {
     var conn = options.conn;
     var db = options.db;
     var qrydata = options.qrydata || {};
@@ -199,7 +198,7 @@ function executeQuery(options, cb) {
                         where_clause: qrydata.where_clause,
                         order_by: qrydata.order_by
                     };
-                    executeQuery({
+                    selectQuery({
                             db: db,
                             qrydata: qdata_count,
                             bindvars: bindvars,
@@ -272,7 +271,7 @@ function executeQuery(options, cb) {
     );
 }
 
-exports.executeQuery = executeQuery;
+exports.executeQuery = selectQuery;
 
 function getFieldNamesOnly(fields) {
     // Removing all the brackets and commas in between
@@ -335,7 +334,7 @@ function buildQuery(qrydata) {
 exports.buildBindVariables = function (inputStructure, input) {
     let result = {};
     let missingParams = [];
-    _.forEach(inputStructure, function (value) {
+    inputStructure.forEach(function (value) {
         if (value[2].startsWith('I') && value[3] && !input[value[0]]) {
             // Value is input, required, and missing
             missingParams.push(value[0]);

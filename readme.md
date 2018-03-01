@@ -66,14 +66,15 @@ close(config, callback);
 See **prepareService**
 ___
 
-### executeQuery
-Executes a query to the database
+### selectQuery
+Executes a select query to the database
 ```javascript
 executeQuery(options, callback);
 ```
 #### Parameters:
 ##### options: *object*
 |Field | Type | Required | Value |
+| --- | --- |--- | --- |
 |conn | TBD | true| database connection |
 |db   | string | true | database name as defined in the config object used to prepare the service|
 |qrydata | object | false | object containing query data, details below |
@@ -84,6 +85,7 @@ executeQuery(options, callback);
 
 ###### qrydata: 
 |Field | Type | Required| Value|
+| --- | --- |--- | --- |
 |fields | string | true | fields to be retrieved in query |
 |from_objects | string | true | objects to be queried |
 |where_clause | string | false | additional criteria for query |
@@ -91,6 +93,7 @@ executeQuery(options, callback);
 
 ###### bindvars: *object*
 |Field | Type | Required | Value |
+| --- | --- |--- | --- |
 |val  | value type | false | the value being used in the package call, omitted if value is out bound |
 |type | oracledb type | false | the oracledb type of the value, only required if value is vartype |
 |dir  | oracledb.BIND_IN/BIND_OUT/BIND_INOUT | false | defines if value is in bound, out bound, or both |
@@ -133,6 +136,7 @@ executePkg(options, callback);
 #### Parameters:
 ##### options: *object*
 |Field | Type | Required | Value |
+| --- | --- |--- | --- |
 |conn | TBD | true| database connection |
 |db   | string | true | database name as defined in the config object used to prepare the service|
 |qry |string | false | string defining the package call to be executed|

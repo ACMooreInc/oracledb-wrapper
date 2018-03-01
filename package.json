@@ -10,8 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "async": "^2.6.0",
-    "lodash": "^4.17.5",
-    "oracledb": "^2.1.2",
-    "path": "^0.12.7"
+    "oracledb": "^2.1.2"
   }
 }
