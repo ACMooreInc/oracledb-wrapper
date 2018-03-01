@@ -30,7 +30,7 @@ var gracefulExit = function () {
 exports.getConnection = getConnection;
 
 function getConnection(dbOrConn, callback) {
-    // If connection is passed retutn same connection
+    // If connection is passed return same connection
     if (dbOrConn.execute && typeof dbOrConn.execute === 'function') {
         return callback(null, dbOrConn);
     }
@@ -40,7 +40,6 @@ function getConnection(dbOrConn, callback) {
         throw new Error('Connection pool unavailable. Did you call prepareService?');
     }
     pool.getConnection(function (err, conn) {
-        // console.log('new Conn: ', ++connCount);
         callback(err, conn);
     });
 }
@@ -182,7 +181,7 @@ function executeQuery(options, cb) {
     var flatQry = options.flatQry;
     var bindvars = options.bindvars;
     var outFormat = options.outFormat || oracledb.OBJECT;
-    var isFlatQry = options.isFlatQry;
+    var isFlatQry = options.isFlatQry; // IS THIS USED????????
     var num_rows;
     async.waterfall([
             function (callback) {
