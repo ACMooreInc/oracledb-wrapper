@@ -37,10 +37,7 @@ getConnection(databaseOrConnection, callback);
 ```
 #### Parameters:
 ##### databaseOrConnection:
-
-
-TODO: DEFINE
-
+Pass the database name as a string or an existing connection
 ___
 
 ### releaseConn
@@ -81,7 +78,6 @@ executeQuery(options, callback);
 |flatQry |string | false | string defining the query to be executed|
 |bindvars | object or array | false | defines the bind variables for the query, details below|
 |outFormat | TBD | false | defines the outformat of the query. defaults to oracledb.OBJECT|
-|isFlatQry | boolean | false? | flag indicating flat query is being used |
 
 ###### qrydata: 
 |Field | Type | Required| Value|
@@ -127,6 +123,9 @@ ___
 
 ### executePkg
 Executes a package call to the database
+
+executePkg is also capible of executing select and update statements. Unlike selectQuery, executePkg is not optimized to retrieve large sets of data. 
+
 ```javascript
 executePkg(options, callback);
 ```
@@ -146,7 +145,8 @@ executePkg(options, callback);
 ___
 
 ### buildBindVariables
- Builds bind variables object for package calls
+ Builds bind variables object for package calls.
+
 ```javascript
 buildBindVariables(inputStructure, input);
 ```

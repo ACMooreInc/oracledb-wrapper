@@ -180,7 +180,6 @@ function selectQuery(options, cb) {
     var flatQry = options.flatQry;
     var bindvars = options.bindvars;
     var outFormat = options.outFormat || oracledb.OBJECT;
-    var isFlatQry = options.isFlatQry; // IS THIS USED????????
     var num_rows;
     async.waterfall([
             function (callback) {
