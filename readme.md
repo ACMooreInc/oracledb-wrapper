@@ -1,5 +1,9 @@
 # OracleDb Wrapper
 
+An easy to use orabledb wrapper with pagination and large result support.
+
+Created and maintained by the A.C. Moore software engineering team.  
+
 ## Methods
 
 ### prepareService
@@ -72,12 +76,12 @@ executeQuery(options, callback);
 ##### options: *object*
 |Field | Type | Required | Value |
 | --- | --- |--- | --- |
-|conn | TBD | true| database connection |
+|conn | database connection | true| database connection |
 |db   | string | true | database name as defined in the config object used to prepare the service|
 |qrydata | object | false | object containing query data, details below |
 |flatQry |string | false | string defining the query to be executed|
 |bindvars | object or array | false | defines the bind variables for the query, details below|
-|outFormat | TBD | false | defines the outformat of the query. defaults to oracledb.OBJECT|
+|outFormat | oracledb type | false | defines the outformat of the query. defaults to oracledb.OBJECT|
 
 ###### qrydata: 
 |Field | Type | Required| Value|
@@ -137,7 +141,7 @@ executePkg(options, callback);
 ##### options: *object*
 |Field | Type | Required | Value |
 | --- | --- |--- | --- |
-|conn | TBD | true| database connection |
+|conn | database connection | true| database connection |
 |db   | string | true | database name as defined in the config object used to prepare the service|
 |qry |string | false | string defining the package call to be executed|
 |bindvars | object or array | false | defines the bind variables for the query, see **executeQuery** for exmaples|

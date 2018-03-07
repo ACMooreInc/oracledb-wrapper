@@ -1,13 +1,20 @@
 {
   "name": "oracledb-wrapper",
   "version": "1.0.0",
-  "description": "",
+  "description": "An easy to use orabledb wrapper with pagination and large result support.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ACMooreInc/oracledb-wrapper"
+  },
+  "author": "A.C. Moore",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ACMooreInc/oracledb-wrapper/issues"
+  },
   "dependencies": {
     "async": "^2.6.0",
     "oracledb": "^2.1.2"
