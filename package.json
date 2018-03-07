@@ -1,5 +1,5 @@
 {
-  "name": "oracledb-wrapper",
+  "name": "@ac-moore-inc/oracledb-wrapper",
   "version": "1.0.0",
   "description": "An easy to use orabledb wrapper with pagination and large result support.",
   "main": "index.js",
