@@ -17,19 +17,18 @@ A configuration object containing information related to the database is require
 ###### config Example:
 ```javascript
 {
-  db: {
-        databaseName: {
-            'connectString': 'dbconnect',
-            'poolMin': 4,
-            'poolMax': 200,
-            'poolIncrement': 4,
-            'poolTimeout': 60,
-            'user': 'db_user_name',
-            'password': 'db_pass',
-            'queueRequests': true,
-            'queueTimeout': 0
-        },
-        other db connections...
+    databaseName: {
+        'connectString': 'dbconnect',
+        'poolMin': 4,
+        'poolMax': 200,
+        'poolIncrement': 4,
+        'poolTimeout': 60,
+        'user': 'db_user_name',
+        'password': 'db_pass',
+        'queueRequests': true,
+        'queueTimeout': 0
+    },
+    other db connections...
 }
 ```
 ___

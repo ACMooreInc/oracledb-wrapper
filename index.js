@@ -3,7 +3,7 @@
 var oracledb = require('oracledb'),
     path = require('path'),
     async = require('async'),
-    config,
+    dbs = {},
     pools = {};
 
 var connCount = 0;
@@ -12,7 +12,7 @@ var gracefulExit = function () {
         if (pool && pool.terminate) {
             pool.terminate(function (err) {
                 if (err) {
-                    console.log('Error: Closing Oracle connection pool', err);
+                    console.error('Error: Closing Oracle connection pool', err);
                     callback(err);
                 } else {
                     callback(null);
@@ -36,29 +36,41 @@ function getConnection(dbOrConn, callback) {
     let db = dbOrConn;
     var pool = pools[db];
     if (!pool) {
-        throw new Error('Connection pool unavailable. Did you call prepareService?');
+        addPool(db, function (err, pool) {
+            if(err) {
+                callback(err);
+                return;
+            }
+            pool.getConnection(function (err, conn) {
+                callback(err, conn);
+            });
+        });
+    } else {
+        pool.getConnection(function (err, conn) {
+            callback(err, conn);
+        });
     }
-    pool.getConnection(function (err, conn) {
-        callback(err, conn);
-    });
 }
 // Create the connection pools
-exports.prepareService = function (dbConfig, cb) {
-    config = dbConfig
-    async.each(Object.keys(config.db), addPool, cb);
-    process.on('SIGINT', gracefulExit).on('SIGTERM', gracefulExit);
+exports.prepareService = function (dbConfig) {
+    if (!dbConfig) {
+        return;
+    }
+    Object.keys(dbConfig).forEach(function (db) {
+        dbs[db] = dbConfig[db];
+    });
 };
 
 function addPool(dbconn, cb) {
     oracledb.createPool(
-        config.db[dbconn],
+        dbs[dbconn],
         function (err, result) {
             if (err) {
-                console.log('Error while creating connection pool for ' + dbconn + '\ngot error' + err.message);
-                process.exit(1);
+                console.error('Error while creating connection pool for ' + dbconn + '\ngot error' + err.message);
+                // process.exit(1);
             }
             pools[dbconn] = result;
-            if (cb) cb(err, null);
+            if (cb) cb(err, result);
         }
     );
 }
@@ -104,7 +116,7 @@ function release(conn, info) {
     if (conn) {
         conn.release(function (err) {
             if (err) {
-                console.log('Error: Releasing connection', info);
+                console.error('Error: Releasing connection', info);
             }
         });
     }
@@ -181,90 +193,90 @@ function selectQuery(options, cb) {
     var outFormat = options.outFormat || oracledb.OBJECT;
     var num_rows;
     async.waterfall([
-            function (callback) {
-                if (qrydata.pagination) {
-                    if (flatQry) {
-                        callback({
-                            message: 'Pagination is not supported with flat queries'
-                        });
-                    }
-                    // Get row count
-                    var fields = qrydata.fields;
-                    var qdata_count = {
-                        fields: 'count(*) NUM_ROWS',
-                        from_objects: qrydata.from_objects,
-                        where_clause: qrydata.where_clause,
-                        order_by: qrydata.order_by
-                    };
-                    selectQuery({
-                            db: db,
-                            qrydata: qdata_count,
-                            bindvars: bindvars,
-                            outFormat: outFormat
-                        },
-                        callback
-                    );
-                } else {
-                    callback(null, {}); // need to pass some positive value as second param to get callback in effect
+        function (callback) {
+            if (qrydata.pagination) {
+                if (flatQry) {
+                    callback({
+                        message: 'Pagination is not supported with flat queries'
+                    });
                 }
-            },
-            function (count_data, callback) {
-                if (qrydata.pagination && count_data.result) {
-                    num_rows = count_data.result[0].NUM_ROWS;
-                    if (num_rows === 0) {
-                        callback(null, {
-                            result: []
-                        });
-                        return;
-                    }
-                    if (qrydata.pagination) {
-                        bindvars.push(qrydata.pagination.page_size * (qrydata.pagination.page_number - 1));
-                        bindvars.push(qrydata.pagination.page_size * qrydata.pagination.page_number);
-                    }
-                }
-
-                flatQry = flatQry || buildQuery(qrydata);
-                executeFlatQuery({
-                    db: db,
-                    conn: conn,
-                    qry: flatQry,
-                    bindvars: bindvars,
-                    qryOptions: {
-                        outFormat: outFormat
-                    }
-                }, callback);
-            },
-            function (stream, callback) {
-                var response = {
-                    result: new Array(300000000)
+                // Get row count
+                var fields = qrydata.fields;
+                var qdata_count = {
+                    fields: 'count(*) NUM_ROWS',
+                    from_objects: qrydata.from_objects,
+                    where_clause: qrydata.where_clause,
+                    order_by: qrydata.order_by
                 };
-                var ind = 0;
-                stream.on('error', function (error) {
-                    callback(error, {});
-                });
-                stream.on('data', function (data) {
-                    response.result[ind++] = data;
-                });
-                stream.on('metadata', function (metadata) {
-                    response.metaData = metadata;
-                });
-                stream.on('end', function () {
-                    response.result.length = ind;
-                    callback(null, response);
-                });
-            },
-            function (response, callback) {
-                if (qrydata.pagination) {
-                    response.paging = {
-                        total_pages: num_rows ? Math.floor(num_rows / qrydata.pagination.page_size) + 1 : 1,
-                        current_page: qrydata.pagination.page_number,
-                        page_size: qrydata.pagination.page_size,
-                        total_count: num_rows
-                    };
-                }
-                callback(null, response);
+                selectQuery({
+                    db: db,
+                    qrydata: qdata_count,
+                    bindvars: bindvars,
+                    outFormat: outFormat
+                },
+                    callback
+                );
+            } else {
+                callback(null, {}); // need to pass some positive value as second param to get callback in effect
             }
-        ],
+        },
+        function (count_data, callback) {
+            if (qrydata.pagination && count_data.result) {
+                num_rows = count_data.result[0].NUM_ROWS;
+                if (num_rows === 0) {
+                    callback(null, {
+                        result: []
+                    });
+                    return;
+                }
+                if (qrydata.pagination) {
+                    bindvars.push(qrydata.pagination.page_size * (qrydata.pagination.page_number - 1));
+                    bindvars.push(qrydata.pagination.page_size * qrydata.pagination.page_number);
+                }
+            }
+
+            flatQry = flatQry || buildQuery(qrydata);
+            executeFlatQuery({
+                db: db,
+                conn: conn,
+                qry: flatQry,
+                bindvars: bindvars,
+                qryOptions: {
+                    outFormat: outFormat
+                }
+            }, callback);
+        },
+        function (stream, callback) {
+            var response = {
+                result: new Array(300000000)
+            };
+            var ind = 0;
+            stream.on('error', function (error) {
+                callback(error, {});
+            });
+            stream.on('data', function (data) {
+                response.result[ind++] = data;
+            });
+            stream.on('metadata', function (metadata) {
+                response.metaData = metadata;
+            });
+            stream.on('end', function () {
+                response.result.length = ind;
+                callback(null, response);
+            });
+        },
+        function (response, callback) {
+            if (qrydata.pagination) {
+                response.paging = {
+                    total_pages: num_rows ? Math.floor(num_rows / qrydata.pagination.page_size) + 1 : 1,
+                    current_page: qrydata.pagination.page_number,
+                    page_size: qrydata.pagination.page_size,
+                    total_count: num_rows
+                };
+            }
+            callback(null, response);
+        }
+    ],
         cb
     );
 }
