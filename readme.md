@@ -9,7 +9,7 @@ Created and maintained by the A.C. Moore software engineering team.
 ### prepareService
 Create the connection pools for provided databases
 ```javascript
-prepareService(config, callback);
+prepareService(config);
 ```
 #### Parameters:
 ##### config: *object*

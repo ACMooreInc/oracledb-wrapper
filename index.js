@@ -52,13 +52,15 @@ function getConnection(dbOrConn, callback) {
     }
 }
 // Create the connection pools
-exports.prepareService = function (dbConfig) {
+exports.prepareService = function (dbConfig, callback) {
     if (!dbConfig) {
+        if(callback) callback();
         return;
     }
     Object.keys(dbConfig).forEach(function (db) {
         dbs[db] = dbConfig[db];
     });
+    if(callback) callback();
 };
 
 function addPool(dbconn, cb) {
