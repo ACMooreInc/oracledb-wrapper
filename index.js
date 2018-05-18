@@ -191,7 +191,7 @@ function selectQuery(options, cb) {
     var db = options.db;
     var qrydata = options.qrydata || {};
     var flatQry = options.flatQry;
-    var bindvars = options.bindvars;
+    var bindvars = options.bindvars || [];
     var outFormat = options.outFormat || oracledb.OBJECT;
     var num_rows;
     async.waterfall([
