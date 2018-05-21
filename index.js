@@ -232,7 +232,7 @@ function selectQuery(options, cb) {
                     return;
                 }
                 if (qrydata.pagination) {
-                    bindvars.push(qrydata.pagination.page_size * (qrydata.pagination.page_number - 1));
+                    bindvars.push((qrydata.pagination.page_size * (qrydata.pagination.page_number - 1)) + 1);
                     bindvars.push(qrydata.pagination.page_size * qrydata.pagination.page_number);
                 }
             }
