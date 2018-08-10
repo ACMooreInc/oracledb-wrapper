@@ -6,6 +6,8 @@ var oracledb = require('oracledb'),
     dbs = {},
     pools = {};
 
+exports.oracledb = oracledb;
+
 var connCount = 0;
 var gracefulExit = function () {
     async.each(pools, function (pool, callback) {
