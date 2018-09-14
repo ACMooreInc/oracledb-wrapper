@@ -304,8 +304,8 @@ function buildQuery(qrydata) {
     if (qrydata.pagination) {
         qry = 'select ' + getFieldNamesOnly(qrydata.fields) + ' from' +
             '  (select ' + qrydata.fields +
-            '    , row_number() over' +
-            '    (order by ' + qrydata.order_by + ') rn' +
+            '    , ' + (qrydata.pagination.paginate_by?'dense_rank':'row_number') + '() over' +
+            '    (order by ' + (qrydata.pagination.paginate_by||qrydata.order_by) + ') rn' +
             '    from ' + qrydata.from_objects +
             (qrydata.where_clause ? '       where ' + qrydata.where_clause : '') + ')' +
             ' where rn between :n and :m' +
