@@ -228,9 +228,9 @@ function selectQuery(options, cb) {
             if (qrydata.pagination && count_data.result) {
                 num_rows = count_data.result[0].NUM_ROWS;
                 if (num_rows === 0) {
-                    callback(null, {
-                        result: []
-                    });
+                    if (num_rows === 0) {
+                        return callback(null, null);
+                    }
                     return;
                 }
                 if (qrydata.pagination) {
@@ -251,6 +251,11 @@ function selectQuery(options, cb) {
             }, callback);
         },
         function (stream, callback) {
+            if (!stream) {
+                return callback(null, {
+                    result: []
+                });
+            }
             var response = {
                 result: new Array(300000000)
             };
