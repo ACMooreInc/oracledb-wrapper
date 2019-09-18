@@ -1,6 +1,6 @@
 {
   "name": "@ac-moore-inc/oracledb-wrapper",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "An easy to use orabledb wrapper with pagination and large result support.",
   "main": "index.js",
   "scripts": {
@@ -16,7 +16,9 @@
     "url": "https://github.com/ACMooreInc/oracledb-wrapper/issues"
   },
   "dependencies": {
-    "async": "~2.6.0",
-    "oracledb": "3.1.2"
+    "async": "~2.6.0"
+  },
+  "peerDependencies": {
+  	"oracledb": ">1.3"
   }
 }
